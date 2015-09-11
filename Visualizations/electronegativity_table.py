@@ -1,4 +1,4 @@
-#Created an electronegativity table. 
+#Created an electronegativity table.
 #This is a variation of the Periodic Table example in the Bokeh library
 #Check out the Periodic Table tutorial here: http://bokeh.pydata.org/en/latest/docs/gallery/periodic.html
 
@@ -7,6 +7,7 @@ from collections import OrderedDict
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import HoverTool, ColumnDataSource
 from bokeh.sampledata import periodic_table
+from bokeh.embed import components
 
 
 
@@ -29,15 +30,15 @@ def electroneg_to_discrete(e_val):
 
 electroneg_discrete = map(lambda x: electroneg_to_discrete(x), elements['electronegativity'])
 
-                
+
 colormap = {
     '0_to_1.5': '#ffffcc',
     '1.5_to_1.9' : '#a1dab4',
     '2.0_to_2.9': '#41b6c4',
     '3.0_to_4.0': '#225ea8',
     'NaN': '#bdbdbd'
-    
-    
+
+
 }
 
 source = ColumnDataSource(
@@ -53,7 +54,7 @@ source = ColumnDataSource(
     atomic_number = elements['atomic number'],
     type_color=[colormap[x] for x in electroneg_discrete],
     electronegativityy = [str(x)+':0.1' for x in elements['period']]))
-    
+
 output_file("electronegativity_table.html")
 
 
@@ -76,7 +77,7 @@ text_props = {
 p.text(x="symx", y="period", text="symbol",
     text_font_style="bold", text_font_size="15pt", **text_props)
 
-p.text(x="symx", y = 'numbery', text='atomic_number', 
+p.text(x="symx", y = 'numbery', text='atomic_number',
       text_font_size='9pt', **text_props)
 
 p.text(x="symx", y="namey", text="name",
@@ -90,5 +91,12 @@ hover.tooltips = OrderedDict([
         ("atomic number", "@atomic_number"),
         ("electronegativity", "@electronegativity")
     ])
+
+script_file = open('electronegativity_table_script.html', 'w+')
+div_file = open('electronegativity_table_div.html', 'w+')
+
+script, div = components(p)
+print(script, file=script_file)
+print(div, file=div_file)
 
 show(p)
